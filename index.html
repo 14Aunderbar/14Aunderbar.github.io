@@ -1,1 +1,117 @@
-GET OUT
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+            
+            @font-face {
+                font-family: 'Pretendard-Regular';
+                src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+                font-weight: 400;
+                font-style: normal;
+            }
+
+            * {
+                margin: 0;
+                border: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            a {
+                color: inherit;
+                text-decoration: none;
+            }
+
+            html {
+                font-family: 'Inter', 'Pretendard-Regular', sans-serif;
+                color: #666;
+            }
+
+            html, body {
+                height: 100%;
+            }
+
+            body {
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .header {
+                flex: 200px 0 0;
+                padding: 12px;
+                display: flex;
+                border-bottom: 1px solid gray;
+                align-items: end;
+                font-size: 3.5em;
+            }
+
+            .bottom-half {
+                flex: 1;
+                display: flex;
+                flex-direction: row;
+                
+            }
+
+            .nav {
+                flex: 180px 0 0;
+                display: flex;
+                flex-direction: column;
+                border-right: 1px solid gray;
+            }
+
+            .nav-item {
+                flex: 40px 0 0;
+                padding-left: 12px;
+                display: flex;
+                flex-direction: column;
+                border-bottom: 1px solid gray;
+                justify-content: center;
+                font-size: 0.9em;
+            }
+
+            .nav-item:hover {
+                background: #eee;
+            }
+
+            .main {
+                flex: 1;
+                padding: 16px;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .title {
+                font-size: 4em;
+                margin-bottom: 8px;
+            }
+
+            .article-img {
+                width: 800px;
+            }
+
+            .html20-cert {
+                width: 100px;
+                padding: 8px;
+                align-self: center;
+            }
+        </style>
+    </head>
+    <body>
+        <a href="/" class="header">안정함</a>
+        <div class="bottom-half">
+            <div class="nav">
+                <div class="nav-item">C/C++</div>
+                <div class="nav-item">Data structure</div>
+                <div class="nav-item">Algorithm</div>
+                <div class="nav-item">Graphics</div>
+                <div style="flex: 1;"></div>
+                <img class="html20-cert" src="/home/taejikim/Downloads/html20.png">
+            </div>
+            <div class="main">
+                <div class="title">GET OUT</div>
+                <img class="article-img" src="/home/taejikim/Downloads/wallpapers/test8.png">
+            </div>
+        </div>
+    </body>
+</html>

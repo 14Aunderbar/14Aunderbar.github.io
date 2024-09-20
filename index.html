@@ -96,6 +96,21 @@
                 align-self: center;
             }
         </style>
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <script>
+            const href = location.href;
+            let post_slug;
+            let qp = href.indexOf('?');
+            if (qp != -1) {
+                post_slug = parseInt(href.slice(qp + 1));
+            }
+            const $ = q => document.querySelector(q);
+            document.addEventListener('DOMContentLoaded', async () => {
+                const src = await (await fetch('articles/' + post_slug + '.md')).text();
+                const html = marked.parse(src);
+                $('.main').innerHTML = html;
+            });
+        </script>
     </head>
     <body>
         <a href="/" class="header">안정함</a>
@@ -109,8 +124,9 @@
                 <img class="html20-cert" src="/home/taejikim/Downloads/html20.png">
             </div>
             <div class="main">
-                <div class="title">GET OUT</div>
+                <!--<div class="title">GET OUT</div>
                 <img class="article-img" src="/home/taejikim/Downloads/wallpapers/test8.png">
+                -->
             </div>
         </div>
     </body>

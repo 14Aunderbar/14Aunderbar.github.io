@@ -102,12 +102,18 @@
             let post_slug;
             let qp = href.indexOf('?');
             if (qp != -1) {
-                post_slug = parseInt(href.slice(qp + 1));
+                post_slug = href.slice(qp + 1);
             }
             const $ = q => document.querySelector(q);
             document.addEventListener('DOMContentLoaded', async () => {
-                const src = await (await fetch('articles/' + post_slug + '.md')).text();
-                const html = marked.parse(src);
+                let html;
+                try {
+                    const src = await (await fetch('articles/' + post_slug + '.md')).text();
+                    const html = marked.parse(src);
+                }
+                catch (e) {
+                    html = 'MAIN PAGE';
+                }
                 $('.main').innerHTML = html;
             });
         </script>

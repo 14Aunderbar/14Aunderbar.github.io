@@ -76,22 +76,42 @@
 
             .main {
                 flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .article {
+                flex: 1;
                 padding: 16px;
                 display: flex;
                 flex-direction: column;
             }
 
-            .article-item {
-
-            }
-
-            .title {
+            .article-title {
                 font-size: 4em;
                 margin-bottom: 8px;
             }
 
+            .article-body {
+
+            }
+
             .article-img {
                 width: 800px;
+            }
+
+            .article-list {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .article-item {
+                padding-left: 16px;
+                flex: 32px 0 0;
+                display: flex;
+                flex-direction: row;
+                border-bottom: 1px solid gray;
             }
 
             .html20-cert {
@@ -114,17 +134,24 @@
                 try {
                     if (!post_slug)
                         throw 0;
+                    const meta = await (await fetch('meta/' + post_slug + '.json')).json();
                     const src = await (await fetch('articles/' + post_slug + '.md')).text();
-                    html = marked.parse(src);
+                    html = `
+                        <div class="article">
+                            <div class="article-title">${meta.title}</div>
+                            <div class="article-body">${marked.parse(src)}</div>
+                        </div>
+                    `;
                 }
                 catch (e) {
                     const articles = await (await fetch('article_list.json')).json();
-                    html = '';
+                    html = '<div class="article-list">';
                     for (const r of articles) {
                         html += `
                             <a class="article-item" href="?${r.slug}">${r.title}</a>
                         `;
                     }
+                    html += '</div>';
                 }
                 $('.main').innerHTML = html;
             });
@@ -142,9 +169,6 @@
                 <img class="html20-cert" src="/home/taejikim/Downloads/html20.png">
             </div>
             <div class="main">
-                <!--<div class="title">GET OUT</div>
-                <img class="article-img" src="/home/taejikim/Downloads/wallpapers/test8.png">
-                -->
             </div>
         </div>
     </body>

@@ -109,7 +109,7 @@
                 let html;
                 try {
                     const src = await (await fetch('articles/' + post_slug + '.md')).text();
-                    const html = marked.parse(src);
+                    html = marked.parse(src);
                 }
                 catch (e) {
                     html = 'MAIN PAGE';

@@ -81,6 +81,10 @@
                 flex-direction: column;
             }
 
+            .article-item {
+
+            }
+
             .title {
                 font-size: 4em;
                 margin-bottom: 8px;
@@ -108,11 +112,19 @@
             document.addEventListener('DOMContentLoaded', async () => {
                 let html;
                 try {
+                    if (!post_slug)
+                        throw 0;
                     const src = await (await fetch('articles/' + post_slug + '.md')).text();
                     html = marked.parse(src);
                 }
                 catch (e) {
-                    html = 'MAIN PAGE';
+                    const articles = await (await fetch('article_list.json')).json();
+                    html = '';
+                    for (const r of articles) {
+                        html += `
+                            <a class="article-item" href="?${r.slug}">${r.title}</a>
+                        `;
+                    }
                 }
                 $('.main').innerHTML = html;
             });

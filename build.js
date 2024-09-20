@@ -1,50 +1,82 @@
-const fs = require("fs");
-const path = require("path");
-const marked = require("marked");
+let Fs = require("fs");
+let Path = require("path");
+let Marked = require("marked");
 
-console.log(__dirname);
+function compile_articles() {
+    let articles_dir = Path.join(__dirname, "articles");
+    let articles_output_dir = Path.join(__dirname, "dist/articles");
+    let post_template_path = "page_template.html";
 
-const articlesDir = path.join(__dirname, "articles");
-const distDir = path.join(__dirname, "dist/articles");
-const post_template_path = "page_template.html";
+    let compile_markdown = (file_path) => {
+        let markdown = Fs.readFileSync(file_path, "utf-8");
+        return Marked.parse(markdown);
+    };
 
-const convertMarkdownToHtml = (filePath) => {
-  const markdown = fs.readFileSync(filePath, "utf-8");
-  return marked.parse(markdown);
-};
+    let page_template = "" + Fs.readFileSync(post_template_path);
+    let page_template_mtime = Fs.statSync(post_template_path).mtime;
 
-const page_template = "" + fs.readFileSync(post_template_path);
-const page_template_mtime = fs.statSync(post_template_path).mtime;
+    let update_article_html = markdown_file => {
+        let output_file = Path.join(
+            articles_output_dir,
+            Path.basename(markdown_file, ".md") + ".html",
+        );
 
-const updateHtmlIfNeeded = (markdownFile) => {
-  console.log(markdownFile);
-  const htmlFile = path.join(
-    distDir,
-    path.basename(markdownFile, ".md") + ".html",
-  );
+        let compiled_file_mtime = Fs.statSync(output_file).mtime;
 
-  const compiled_file_mtime = fs.statSync(htmlFile).mtime;
+        if (
+            !Fs.existsSync(output_file) ||
+            Fs.statSync(markdown_file).mtime > compiled_file_mtime ||
+            page_template_mtime > compiled_file_mtime
+        ) {
+            let compiled = compile_markdown(markdown_file);
+            let html = page_template;
+            html = html.replace("<SOURCE></SOURCE>", compiled);
+            Fs.writeFileSync(output_file, html);
+            console.log(`Updated: ${output_file}`);
+        }
+        else {
+            console.log(`${output_file} is up to date.`);
+        }
+    };
 
-  // HTML 파일이 존재하지 않거나 소스의 날짜가 출력물보다 최신인 경우
-  if (
-    !fs.existsSync(htmlFile) ||
-    fs.statSync(markdownFile).mtime > compiled_file_mtime ||
-    page_template_mtime > compiled_file_mtime
-  ) {
-    let compiled = convertMarkdownToHtml(markdownFile);
-    let html = page_template;
-    html = html.replace("<SOURCE></SOURCE>", compiled);
-    fs.writeFileSync(htmlFile, html);
-    console.log(`Updated: ${htmlFile}`);
-  } else {
-    console.log(`${htmlFile} is up to date.`);
-  }
-};
+    Fs.readdirSync(articles_dir).forEach(file => {
+        if (Path.extname(file) === ".md") {
+            let markdownFile = Path.join(articles_dir, file);
+            update_article_html(markdownFile);
+        }
+    });
+}
 
-// articles 폴더 내의 모든 .md 파일에 대해 업데이트 수행
-fs.readdirSync(articlesDir).forEach((file) => {
-  if (path.extname(file) === ".md") {
-    const markdownFile = path.join(articlesDir, file);
-    updateHtmlIfNeeded(markdownFile);
-  }
-});
+async function update_article_list() {
+    const get_article_list = (directory, limit = 5) => {
+        return new Promise(res => {
+            Fs.readdir(directory, (err, files) => {
+                if (err) {
+                    return console.error('Error reading directory:', err);
+                }
+            
+                const file_details = files.flatMap(file => {
+                    if (Path.extname(file) != '.md') {
+                        return [];
+                    }
+                    let slug = Path.basename(file, '.md');
+                    return [{
+                        slug,
+                        title: JSON.parse(
+                            Fs.readFileSync(Path.join('meta', slug + '.json'))).title,
+                        mtime: Fs.statSync(Path.join(directory, file)).mtime,
+                    }];
+                });
+            
+                file_details.sort((a, b) => b.mtime - a.mtime);
+            
+                res(file_details);
+            });
+        });
+    };
+    
+    Fs.writeFileSync('recent_articles.json',
+        JSON.stringify(await get_article_list('articles')));
+}
+
+update_article_list();

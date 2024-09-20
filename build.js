@@ -75,7 +75,7 @@ async function update_article_list() {
         });
     };
     
-    Fs.writeFileSync('recent_articles.json',
+    Fs.writeFileSync('article_list.json',
         JSON.stringify(await get_article_list('articles')));
 }
 
